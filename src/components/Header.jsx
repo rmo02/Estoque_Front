@@ -10,7 +10,7 @@ export function Header() {
   };
 
   return (
-    <header className="bg-[#001828] w-screen py-4 px-8 flex justify-between items-center">
+    <header className="bg-color_blue w-full py-3 px-8 flex justify-between items-center">
       {/* Logo Mi*/}
       <div className="flex items-center">
         
@@ -18,7 +18,7 @@ export function Header() {
 
       {/* Nome da aplicação */}
       <div>
-        <h2 className="text-white font-semibold text-2xl font-serif">Estoque</h2>
+        <h2 className="text-white font-medium text-2xl">Estoque</h2>
       </div>
 
       {/* Avatar */}
