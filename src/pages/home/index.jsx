@@ -2,13 +2,35 @@ import { useState } from 'react'
 import api from '../../api'
 import { Header } from '../../components/Header'
 import { FaEdit, FaEye, FaSearch, FaTrash } from 'react-icons/fa'
+import Modal from 'react-modal'
 import logo from '../../assets/logo.png'
 import { Card } from '../../components/Card'
+import { AddItem } from '../../components/Modals/AddItem'
+
 
 export function Home() {
+  const [modalIsOpen, setModalIsOpen] = useState(false)
   const [data, setData] = useState(['1'])
   const [pesquisar, setPesquisar] = useState('')
 
+  function openModal(){
+    setModalIsOpen(true)
+  }
+  function closeModal(){
+     setModalIsOpen(false)
+  }
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      transform: "translate(-50%, -50%)",
+      width: "40%",
+      height: "75%",
+      borderRadius: "0.5rem",
+    },
+  };
   const getEquipamentos = async () => {
     try {
       const res = await api.get('/', {})
@@ -31,7 +53,9 @@ export function Home() {
     <div className="flex flex-col w-full h-screen bg-gray-100 font-poppins">
       <Header />
       <div className="mx-10 my-3 flex justify-between items-center">
-        <div className="cursor-pointer text-md px-12 py-1 bg-color_blue text-white rounded-2xl flex items-center justify-center">
+        <div
+          className="cursor-pointer text-md px-12 py-1 bg-color_blue text-white rounded-2xl flex items-center justify-center"
+          onClick={openModal}>
           Adicionar Item
         </div>
         <div className="bg-color_grey_bg flex flex-row items-center justify-between w-1/3 rounded-2xl ">
@@ -72,6 +96,9 @@ export function Home() {
           })}
         </div>
       </div>
+      <Modal isOpen={modalIsOpen} onRequestClose={closeModal} style={customStyles} contentLabel="Adicionar Novo Ítem" shouldCloseOnOverlayClick={false} ariaHideApp={false}> 
+        <AddItem closeModal={closeModal}/>
+      </Modal>
     </div>
   )
 }

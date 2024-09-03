@@ -1,7 +1,7 @@
 import React from 'react'
 import logo from '../../assets/logo.png'
 
-export function Card({nomeProduto, prateleira, posicao}) {
+export function Card({ nomeProduto, prateleira, posicao }) {
   return (
     <div className="bg-color_blue w-1/4 flex flex-col text-white font-medium rounded-lg ">
       <img src={logo} alt="Foto do Equipamento" />
@@ -24,6 +24,5 @@ export function Card({nomeProduto, prateleira, posicao}) {
         </div>
       </div>
     </div>
-    
   )
 }
