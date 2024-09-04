@@ -7,30 +7,29 @@ import logo from '../../assets/logo.png'
 import { Card } from '../../components/Card'
 import { AddItem } from '../../components/Modals/AddItem'
 
-
 export function Home() {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [data, setData] = useState(['1'])
   const [pesquisar, setPesquisar] = useState('')
 
-  function openModal(){
+  function openModal() {
     setModalIsOpen(true)
   }
-  function closeModal(){
-     setModalIsOpen(false)
+  function closeModal() {
+    setModalIsOpen(false)
   }
   const customStyles = {
     content: {
-      top: "50%",
-      left: "50%",
-      right: "auto",
-      bottom: "auto",
-      transform: "translate(-50%, -50%)",
-      width: "40%",
-      height: "75%",
-      borderRadius: "0.5rem",
-    },
-  };
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      transform: 'translate(-50%, -50%)',
+      width: '40%',
+      height: '75%',
+      borderRadius: '0.5rem'
+    }
+  }
   const getEquipamentos = async () => {
     try {
       const res = await api.get('/', {})
@@ -55,7 +54,8 @@ export function Home() {
       <div className="mx-10 my-3 flex justify-between items-center">
         <div
           className="cursor-pointer text-md px-12 py-1 bg-color_blue text-white rounded-2xl flex items-center justify-center"
-          onClick={openModal}>
+          onClick={openModal}
+        >
           Adicionar Item
         </div>
         <div className="bg-color_grey_bg flex flex-row items-center justify-between w-1/3 rounded-2xl ">
@@ -85,19 +85,30 @@ export function Home() {
           <p className="text-lg">Prateleira</p>
           {/* Card */}
           {filtrarEquipamentos().map((equipamento, i) => {
-            return <Card nomeProduto="Câmera" prateleira="01" posicao="A2" />
+            return (
+              <Card key={i} nomeProduto="Câmera" prateleira="01" posicao="A2" />
+            )
           })}
         </div>
         <div className="w-full mt-3 px-10">
           <p className="text-lg">Seção</p>
           {/* Card */}
           {filtrarEquipamentos().map((equipamento, i) => {
-            return <Card nomeProduto="Câmera" prateleira="01" posicao="A2" />
+            return (
+              <Card key={i} nomeProduto="Câmera" prateleira="01" posicao="A2" />
+            )
           })}
         </div>
       </div>
-      <Modal isOpen={modalIsOpen} onRequestClose={closeModal} style={customStyles} contentLabel="Adicionar Novo Ítem" shouldCloseOnOverlayClick={false} ariaHideApp={false}> 
-        <AddItem closeModal={closeModal}/>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Adicionar Novo Ítem"
+        shouldCloseOnOverlayClick={false}
+        ariaHideApp={false}
+      >
+        <AddItem closeModal={closeModal} />
       </Modal>
     </div>
   )

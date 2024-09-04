@@ -9,6 +9,7 @@ export default {
         color_green: '#00827A',
         color_red: '#C95656',
         color_yellow: '#D7CE09',
+        color_grey: '#423F3F',
         color_grey_bg: '#E8E8E8',
         background: '#F5F5F5'
       },
