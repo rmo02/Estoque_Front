@@ -1,29 +1,29 @@
-import { useState } from 'react'
-import { MdClose } from 'react-icons/md'
+import { useState } from "react";
+import { MdClose } from "react-icons/md";
 
 export function AddItem({ closeModal }) {
-  const [name, setName] = useState('')
-  const [naPrateleira, setNaPrateleira] = useState('true')
-  const [prateleira, setPrateleira] = useState('')
-  const [secao, setSecao] = useState('')
-  const [linha, setLinha] = useState('')
-  const [coluna, setColuna] = useState('')
-  const [posicao, setPosicao] = useState('')
-  const [file, setFile] = useState('')
+  const [name, setName] = useState("");
+  const [naPrateleira, setNaPrateleira] = useState("true");
+  const [prateleira, setPrateleira] = useState("");
+  const [secao, setSecao] = useState("");
+  const [linha, setLinha] = useState("");
+  const [coluna, setColuna] = useState("");
+  const [posicao, setPosicao] = useState("");
+  const [file, setFile] = useState("");
+  const [status, setStatus] = useState("disponivel"); // Define o estado para o status
 
-  const handleChangeSelect = e => {
-    setNaPrateleira(e.target.value)
-    setLinha('')
-    setColuna('')
-    setSecao('')
-    setPosicao('')
-  }
+  const handleChangeSelect = (e) => {
+    setNaPrateleira(e.target.value);
+    setLinha("");
+    setColuna("");
+    setSecao("");
+    setPosicao("");
+  };
 
   return (
     <div className="flex flex-col w-full">
       <div className="flex flex-row justify-between items-center font-semibold">
-        <p>Adicionar Ítem</p>
-        <img src={file} alt="" />
+        <p>Adicionar item</p>
         <MdClose
           className="cursor-pointer hover:bg-color_grey_bg hover:rounded-full"
           onClick={closeModal}
@@ -39,8 +39,8 @@ export function AddItem({ closeModal }) {
                 type="name"
                 className="border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue w-full text-sm"
                 id="Name"
-                placeholder="Digite o nome do ítem"
-                onChange={e => setName(e.target.value)}
+                placeholder="Digite o nome do item"
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="flex flex-col justify-start items-start w-1/2 space-y-1">
@@ -56,7 +56,7 @@ export function AddItem({ closeModal }) {
               </select>
             </div>
           </div>
-          {naPrateleira === 'true' ? (
+          {naPrateleira === "true" ? (
             <div className="flex flex-row justify-between items-center space-x-4 py-2 w-full">
               <div className="flex flex-col space-y-1 w-1/2">
                 <label htmlFor="Colum">Coluna</label>
@@ -65,8 +65,8 @@ export function AddItem({ closeModal }) {
                   className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
                   id="Colum"
                   value={coluna}
-                  placeholder="Digite a coluna do ítem"
-                  onChange={e => setColuna(e.target.value)}
+                  placeholder="Digite a coluna do item"
+                  onChange={(e) => setColuna(e.target.value)}
                 />
               </div>
               <div className="flex flex-col space-y-1 w-1/2">
@@ -76,8 +76,8 @@ export function AddItem({ closeModal }) {
                   className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
                   id="Line"
                   value={linha}
-                  placeholder="Digite a seção do ítem"
-                  onChange={e => setLinha(e.target.value)}
+                  placeholder="Digite a seção do item"
+                  onChange={(e) => setLinha(e.target.value)}
                 />
               </div>
             </div>
@@ -90,8 +90,8 @@ export function AddItem({ closeModal }) {
                   className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
                   id="Section"
                   value={secao}
-                  placeholder="Digite a seção do ítem"
-                  onChange={e => setSecao(e.target.value)}
+                  placeholder="Digite a seção do item"
+                  onChange={(e) => setSecao(e.target.value)}
                 />
               </div>
               <div className="flex flex-col space-y-1 w-1/2">
@@ -101,8 +101,8 @@ export function AddItem({ closeModal }) {
                   className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
                   id="Position"
                   value={posicao}
-                  placeholder="Digite a Posição do ítem"
-                  onChange={e => setPosicao(e.target.value)}
+                  placeholder="Digite a Posição do item"
+                  onChange={(e) => setPosicao(e.target.value)}
                 />
               </div>
             </div>
@@ -114,7 +114,7 @@ export function AddItem({ closeModal }) {
             type="file"
             className="cursor-pointer"
             id="Image"
-            onChange={e => setFile(e.target.files[0])}
+            onChange={(e) => setFile(e.target.files[0])}
           />
         </div>
         <div>
@@ -122,12 +122,18 @@ export function AddItem({ closeModal }) {
             <p className="font-semibold">Status</p>
 
             <div className="flex flex-row justify-start items-center w-full space-x-5">
-              <div className="flex flex-row items-center w-1/4 space-x-2">
+              <div className="flex flex-row items-center w-1/4 space-x-2 cursor-pointer">
+                {/* input deixa de ser do tipo checkbox e passa a ser radio*/}
+                {/* setStatus controla o valor dele */}
                 <input
-                  className="h-3 w-3 rounded-full appearance-none border-2 border-gray-400 checked:bg-color_blue"
-                  type="checkbox"
+                  className="h-3 w-3 rounded-full appearance-none border-2 border-gray-400 checked:bg-color_blue cursor-pointer"
+                  // type="checkbox"
                   id="checkboxDisponivel"
                   value="disponivel"
+                  type="radio"
+                  name="status"
+                  checked={status === "disponivel"}
+                  onChange={(e) => setStatus(e.target.value)}
                 />
                 <label
                   className="flex items-center"
@@ -136,23 +142,29 @@ export function AddItem({ closeModal }) {
                   Disponível
                 </label>
               </div>
-              <div className="flex flex-row items-center w-1/4 space-x-2">
+              <div className="flex flex-row items-center w-1/4 space-x-2 cursor-pointer">
                 <input
-                  className="h-3 w-3 rounded-full appearance-none border-2 border-gray-400 checked:bg-color_blue"
-                  type="checkbox"
-                  id="checkboxEmUso"
+                  className="h-3 w-3 rounded-full appearance-none border-2 border-gray-400 checked:bg-color_blue cursor-pointer"
+                  type="radio"
+                  id="radioEmUso"
+                  name="status"
                   value="emUso"
+                  checked={status === "emUso"}
+                  onChange={(e) => setStatus(e.target.value)}
                 />
                 <label className="flex items-center" htmlFor="checkboxEmUso">
                   Em Uso
                 </label>
               </div>
-              <div className="flex flex-row items-center w-1/4 space-x-2">
+              <div className="flex flex-row items-center w-1/4 space-x-2 cursor-pointer">
                 <input
-                  className="h-3 w-3 rounded-full appearance-none border-2 border-gray-400 checked:bg-color_blue"
-                  type="checkbox"
-                  id="checkboxEmManutencao"
+                  className="h-3 w-3 rounded-full appearance-none border-2 border-gray-400 checked:bg-color_blue cursor-pointer"
+                  type="radio"
+                  id="radioEmManutencao"
+                  name="status"
                   value="emManutencao"
+                  checked={status === "emManutencao"}
+                  onChange={(e) => setStatus(e.target.value)}
                 />
                 <label
                   className="flex items-center"
@@ -180,5 +192,5 @@ export function AddItem({ closeModal }) {
         </div>
       </form>
     </div>
-  )
+  );
 }
