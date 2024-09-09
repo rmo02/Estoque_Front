@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import api from '../../api'
+import { useEffect, useState } from 'react'
+import { app } from '../../api/api'
 import { Header } from '../../components/Header'
 import { FaEdit, FaEye, FaSearch, FaTrash } from 'react-icons/fa'
 import Modal from 'react-modal'
@@ -11,6 +11,15 @@ export function Home() {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [data, setData] = useState(['1'])
   const [pesquisar, setPesquisar] = useState('')
+  const [cards, setCards] = useState([])
+
+  useEffect(() => {
+    const getData = async () => {
+      const response = await app.get('/equipment')
+      setCards(response.data)
+    }
+    getData()
+  }, [])
 
   function openModal() {
     setModalIsOpen(true)

@@ -1,24 +1,64 @@
-import { useState } from "react";
-import { MdClose } from "react-icons/md";
+import { useEffect, useState } from 'react'
+import { MdClose } from 'react-icons/md'
+import { app } from '../../../api/api'
 
 export function AddItem({ closeModal }) {
-  const [name, setName] = useState("");
-  const [naPrateleira, setNaPrateleira] = useState("true");
-  const [prateleira, setPrateleira] = useState("");
-  const [secao, setSecao] = useState("");
-  const [linha, setLinha] = useState("");
-  const [coluna, setColuna] = useState("");
-  const [posicao, setPosicao] = useState("");
-  const [file, setFile] = useState("");
-  const [status, setStatus] = useState("disponivel"); // Define o estado para o status
+  const [name, setName] = useState('')
+  const [naPrateleira, setNaPrateleira] = useState('true')
+  const [prateleira, setPrateleira] = useState([])
+  const [shelf, setShelf] = useState('')
+  const [secao, setSecao] = useState([])
+  const [section, setSection] = useState('')
+  const [linha, setLinha] = useState('')
+  const [coluna, setColuna] = useState('')
+  const [posicao, setPosicao] = useState('')
+  const [file, setFile] = useState('')
+  const [status, setStatus] = useState('disponivel') // Define o estado para o status
+  const [cards, setCards] = useState([])
 
-  const handleChangeSelect = (e) => {
-    setNaPrateleira(e.target.value);
-    setLinha("");
-    setColuna("");
-    setSecao("");
-    setPosicao("");
-  };
+  useEffect(() => {
+    const getEquipments = async () => {
+      const response = await app.get('/equipment')
+      setCards(response.data)
+    }
+    const getShelves = async () => {
+      const response = await app.get('/shelves')
+      setPrateleira(response.data)
+    }
+    const getSections = async () => {
+      const response = await app.get('/section')
+      setSecao(response.data)
+    }
+    getEquipments()
+    getShelves()
+    getSections()
+  }, [])
+  console.log(name)
+  console.log(naPrateleira)
+  console.log(shelf)
+  console.log(section)
+
+  const handleAddItem = async () => {
+    console.log('handle')
+
+    try {
+      const response = await app.post('/equipment', {
+        name: name,
+        inShelf: naPrateleira,
+        shelfId: shelf,
+        sectionID: section
+      })
+      if (response.status === 201) {
+        console.log('deu certo')
+      }
+      if (response.status === 200) {
+        console.log('deu certo')
+      }
+      console.log(response)
+    } catch {
+      alert('Erro.')
+    }
+  }
 
   return (
     <div className="flex flex-col w-full">
@@ -40,14 +80,14 @@ export function AddItem({ closeModal }) {
                 className="border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue w-full text-sm"
                 id="Name"
                 placeholder="Digite o nome do item"
-                onChange={(e) => setName(e.target.value)}
+                onChange={e => setName(e.target.value)}
               />
             </div>
             <div className="flex flex-col justify-start items-start w-1/2 space-y-1">
               <label htmlFor="inputState">Tipo de Armazenamento</label>
               <select
                 id="inputState"
-                onChange={handleChangeSelect}
+                onChange={e => setNaPrateleira(e.target.value)}
                 className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
               >
                 <option disabled>Selecione o Tipo de Armazenamento</option>
@@ -56,57 +96,96 @@ export function AddItem({ closeModal }) {
               </select>
             </div>
           </div>
-          {naPrateleira === "true" ? (
-            <div className="flex flex-row justify-between items-center space-x-4 py-2 w-full">
-              <div className="flex flex-col space-y-1 w-1/2">
-                <label htmlFor="Colum">Coluna</label>
-                <input
-                  type="text"
+          <div className="flex flex-row justify-between items-center space-x-4 py-2 w-full">
+            {naPrateleira === 'true' ? (
+              <div className="flex flex-col justify-start items-start w-1/2 space-y-1">
+                <label htmlFor="inputState">Prateleira</label>
+                <select
+                  onChange={e => setShelf(e.target.value)}
+                  id="inputState"
                   className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-                  id="Colum"
-                  value={coluna}
-                  placeholder="Digite a coluna do item"
-                  onChange={(e) => setColuna(e.target.value)}
-                />
+                >
+                  <option disabled>Selecione a Prateleira</option>
+                  {prateleira
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((item, index) => {
+                      console.log(item.id)
+                      return (
+                        <option key={index + 1} value={item.id}>
+                          {item.name}
+                        </option>
+                      )
+                    })}
+                </select>
               </div>
-              <div className="flex flex-col space-y-1 w-1/2">
-                <label htmlFor="Line">Linha</label>
-                <input
-                  type="text"
+            ) : (
+              <div className="flex flex-col justify-start items-start w-1/2 space-y-1">
+                <label htmlFor="inputState">Seção</label>
+                <select
+                  onChange={e => setSection(e.target.value)}
+                  id="inputState"
                   className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-                  id="Line"
-                  value={linha}
-                  placeholder="Digite a seção do item"
-                  onChange={(e) => setLinha(e.target.value)}
-                />
+                >
+                  <option disabled>Selecione a Seção</option>
+                  {secao
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((item, index) => {
+                      return (
+                        <option key={index + 1} value={item.id}>
+                          {item.name}
+                        </option>
+                      )
+                    })}
+                </select>
               </div>
+            )}
+
+            {/* STATUS */}
+            <div className="flex flex-col justify-start items-start w-1/2 space-y-1">
+              <label htmlFor="inputState">Status</label>
+              <select
+                id="inputState"
+                className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
+              >
+                <option disabled>Status</option>
+                <option value="DISPONIVEL">Disponível</option>
+                <option value="EM_USO">Em Uso</option>
+                <option value="EM_MANUTENCAO">Em Manutenção</option>
+              </select>
             </div>
-          ) : (
-            <div className="flex flex-row justify-between items-center space-x-4 py-2 w-full">
-              <div className="flex flex-col space-y-1 w-1/2">
-                <label htmlFor="Section">Seção</label>
-                <input
-                  type="text"
-                  className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-                  id="Section"
-                  value={secao}
-                  placeholder="Digite a seção do item"
-                  onChange={(e) => setSecao(e.target.value)}
-                />
-              </div>
-              <div className="flex flex-col space-y-1 w-1/2">
-                <label htmlFor="Position">Posição</label>
-                <input
-                  type="text"
-                  className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-                  id="Position"
-                  value={posicao}
-                  placeholder="Digite a Posição do item"
-                  onChange={(e) => setPosicao(e.target.value)}
-                />
-              </div>
+          </div>
+
+          {/* COLUNA E LINHA */}
+          <div className="flex flex-row justify-between items-center space-x-4 py-2 w-full">
+            <div className="flex flex-col justify-start items-start w-1/2 space-y-1">
+              <label htmlFor="inputState">Coluna</label>
+              <select
+                id="inputState"
+                className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
+              >
+                <option disabled>Selecione a Coluna</option>
+                {[...Array(8)].map((item, index) => (
+                  <option key={index + 1} value={index + 1}>
+                    Coluna {index + 1}
+                  </option>
+                ))}
+              </select>
             </div>
-          )}
+            <div className="flex flex-col justify-start items-start w-1/2 space-y-1">
+              <label htmlFor="inputState">Linha</label>
+              <select
+                id="inputState"
+                className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
+              >
+                <option disabled>Selecione a Linha</option>
+                {[...Array(8)].map((item, index) => (
+                  <option key={index + 1} value={index + 1}>
+                    Linha {index + 1}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
         <div className="flex flex-col justify-start w-full space-y-1">
           <label htmlFor="Image">Imagem</label>
@@ -114,67 +193,8 @@ export function AddItem({ closeModal }) {
             type="file"
             className="cursor-pointer"
             id="Image"
-            onChange={(e) => setFile(e.target.files[0])}
+            onChange={e => setFile(e.target.files[0])}
           />
-        </div>
-        <div>
-          <div className="flex flex-col justify-start py-2 space-y-1 w-full">
-            <p className="font-semibold">Status</p>
-
-            <div className="flex flex-row justify-start items-center w-full space-x-5">
-              <div className="flex flex-row items-center w-1/4 space-x-2 cursor-pointer">
-                {/* input deixa de ser do tipo checkbox e passa a ser radio*/}
-                {/* setStatus controla o valor dele */}
-                <input
-                  className="h-3 w-3 rounded-full appearance-none border-2 border-gray-400 checked:bg-color_blue cursor-pointer"
-                  // type="checkbox"
-                  id="checkboxDisponivel"
-                  value="disponivel"
-                  type="radio"
-                  name="status"
-                  checked={status === "disponivel"}
-                  onChange={(e) => setStatus(e.target.value)}
-                />
-                <label
-                  className="flex items-center"
-                  htmlFor="checkboxDisponivel"
-                >
-                  Disponível
-                </label>
-              </div>
-              <div className="flex flex-row items-center w-1/4 space-x-2 cursor-pointer">
-                <input
-                  className="h-3 w-3 rounded-full appearance-none border-2 border-gray-400 checked:bg-color_blue cursor-pointer"
-                  type="radio"
-                  id="radioEmUso"
-                  name="status"
-                  value="emUso"
-                  checked={status === "emUso"}
-                  onChange={(e) => setStatus(e.target.value)}
-                />
-                <label className="flex items-center" htmlFor="checkboxEmUso">
-                  Em Uso
-                </label>
-              </div>
-              <div className="flex flex-row items-center w-1/4 space-x-2 cursor-pointer">
-                <input
-                  className="h-3 w-3 rounded-full appearance-none border-2 border-gray-400 checked:bg-color_blue cursor-pointer"
-                  type="radio"
-                  id="radioEmManutencao"
-                  name="status"
-                  value="emManutencao"
-                  checked={status === "emManutencao"}
-                  onChange={(e) => setStatus(e.target.value)}
-                />
-                <label
-                  className="flex items-center"
-                  htmlFor="checkboxEmManutencao"
-                >
-                  Manutenção
-                </label>
-              </div>
-            </div>
-          </div>
         </div>
         <div className="flex flex-row justify-end space-x-2 py-5">
           <button
@@ -184,7 +204,7 @@ export function AddItem({ closeModal }) {
             Cancelar
           </button>
           <button
-            type="submit"
+            onClick={handleAddItem}
             className=" text-white bg-color_blue hover:opacity-80 rounded-md py-1 px-2"
           >
             Salvar
@@ -192,5 +212,5 @@ export function AddItem({ closeModal }) {
         </div>
       </form>
     </div>
-  );
+  )
 }
