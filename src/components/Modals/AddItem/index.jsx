@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react'
 import { MdClose } from 'react-icons/md'
 import { app } from '../../../api/api'
+import Swal from 'sweetalert2'
 
 export function AddItem({ closeModal }) {
   const [name, setName] = useState('')
   const [naPrateleira, setNaPrateleira] = useState('true')
   const [prateleira, setPrateleira] = useState([])
-  const [shelf, setShelf] = useState(null)
+  const [shelf, setShelf] = useState('')
   const [secao, setSecao] = useState([])
-  const [section, setSection] = useState(null)
+  const [section, setSection] = useState('')
   const [linha, setLinha] = useState('')
   const [coluna, setColuna] = useState('')
-  const [file, setFile] = useState('')
+  const [file, setFile] = useState(null)
+  const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState('') // Define o estado para o status
   const [cards, setCards] = useState([])
 
@@ -33,21 +35,38 @@ export function AddItem({ closeModal }) {
     getSections()
   }, [])
 
+  console.log(shelf == '')
+  console.log(section == '')
+
   const handleAddItem = async event => {
     event.preventDefault() // Previne o comportamento padrão do formulário
+
+    const formData = new FormData()
+    formData.append('name', name)
+    formData.append('inShelf', naPrateleira)
+    formData.append('linha', linha)
+    formData.append('column', coluna)
+    formData.append('status', status)
+    formData.append('file', file)
+    {
+      shelf === ''
+        ? formData.append('sectionId', section)
+        : formData.append('shelfId', shelf)
+    }
+
     try {
       let response
-      response = await app.post('/equipment', {
-        name: name,
-        inShelf: naPrateleira,
-        shelfId: shelf,
-        sectionId: section,
-        linha: linha,
-        column: coluna,
-        status: status
-      })
+      response = await app.post('/equipment', formData)
+      console.log(response)
       if (response.status === 201) {
-        console.log('Item adicionado com sucesso.')
+        Toast.fire({
+          icon: 'success',
+          title: 'Equipamento criado com sucesso'
+        })
+        closeModal()
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500)
       }
 
       setTimeout(() => {
@@ -55,8 +74,8 @@ export function AddItem({ closeModal }) {
       }, 1500)
       alert('Item adicionado com sucesso')
     } catch (error) {
-      console.error('Erro na requisição:', error.response.data.error) // Exibe detalhes do erro
-      alert(error.response.data.error)
+      console.error(error)
+      // alert(error.response)
     }
   }
 
@@ -65,11 +84,23 @@ export function AddItem({ closeModal }) {
     setNaPrateleira(value)
 
     if (value === 'true') {
-      setSection(null) // Limpa a seção quando for prateleira
+      setSection('') // Limpa a seção quando for prateleira
     } else {
-      setShelf(null) // Limpa a prateleira quando for seção
+      setShelf('') // Limpa a prateleira quando for seção
     }
   }
+
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 1500,
+    timerProgressBar: true,
+    didOpen: toast => {
+      toast.onmouseenter = Swal.stopTimer
+      toast.onmouseleave = Swal.resumeTimer
+    }
+  })
 
   return (
     <div className="flex flex-col w-full">
@@ -118,9 +149,9 @@ export function AddItem({ closeModal }) {
                   onChange={e => setShelf(e.target.value)}
                   id="inputState"
                   className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-                  value={shelf} // Garante que o valor de shelf é refletido corretamente
+                  value={shelf === null ? '' : shelf} // Garante que o valor de shelf é refletido corretamente
                 >
-                  <option value={null} disabled>
+                  <option value="" disabled>
                     Selecione a Prateleira
                   </option>
                   {prateleira
@@ -141,9 +172,9 @@ export function AddItem({ closeModal }) {
                   onChange={e => setSection(e.target.value)}
                   id="inputState"
                   className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-                  value={section} // Garante que o valor de section é refletido corretamente
+                  value={section === null ? '' : section} // Garante que o valor de section é refletido corretamente
                 >
-                  <option value={null} disabled>
+                  <option value="" disabled>
                     Selecione a Seção
                   </option>
                   {secao
