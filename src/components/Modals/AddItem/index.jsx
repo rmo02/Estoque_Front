@@ -1,102 +1,104 @@
-import { useEffect, useState } from "react";
-import { MdClose } from "react-icons/md";
-import { app } from "../../../api/api";
-import Swal from "sweetalert2";
+import { useEffect, useState } from 'react'
+import { MdClose } from 'react-icons/md'
+import { app } from '../../../api/api'
+import Swal from 'sweetalert2'
 
 export function AddItem({ closeModal }) {
-  const [name, setName] = useState("");
-  const [naPrateleira, setNaPrateleira] = useState("true");
-  const [prateleira, setPrateleira] = useState([]);
-  const [shelf, setShelf] = useState("");
-  const [secao, setSecao] = useState([]);
-  const [section, setSection] = useState("");
-  const [linha, setLinha] = useState("");
-  const [coluna, setColuna] = useState("");
-  const [file, setFile] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState(""); // Define o estado para o status
-  const [cards, setCards] = useState([]);
+  const [name, setName] = useState('')
+  const [naPrateleira, setNaPrateleira] = useState('true')
+  const [prateleira, setPrateleira] = useState([])
+  const [shelf, setShelf] = useState('')
+  const [secao, setSecao] = useState([])
+  const [section, setSection] = useState('')
+  const [linha, setLinha] = useState('')
+  const [coluna, setColuna] = useState('')
+  const [file, setFile] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [status, setStatus] = useState('') // Define o estado para o status
+  const [cards, setCards] = useState([])
 
   useEffect(() => {
     const getEquipments = async () => {
-      const response = await app.get("/equipment");
-      setCards(response.data);
-    };
+      const response = await app.get('/equipment')
+      setCards(response.data)
+    }
     const getShelves = async () => {
-      const response = await app.get("/shelves");
-      setPrateleira(response.data);
-    };
+      const response = await app.get('/shelves')
+      setPrateleira(response.data)
+    }
     const getSections = async () => {
-      const response = await app.get("/section");
-      setSecao(response.data);
-    };
-    getEquipments();
-    getShelves();
-    getSections();
-  }, []);
+      const response = await app.get('/section')
+      setSecao(response.data)
+    }
+    getEquipments()
+    getShelves()
+    getSections()
+  }, [])
 
-  const handleAddItem = async (event) => {
-    event.preventDefault(); // Previne o comportamento padrão do formulário
+  const finishForm =
+    name.length !== 0 &&
+    linha.length !== 0 &&
+    coluna.length !== 0 &&
+    status.length !== 0 &&
+    ((section.length !== 0 && shelf === '') ||
+      (shelf.length !== 0 && section === ''))
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("inShelf", naPrateleira);
-    formData.append("linha", linha);
-    formData.append("column", coluna);
-    formData.append("status", status);
-    formData.append("image", file);
+  const handleAddItem = async event => {
+    event.preventDefault() // Previne o comportamento padrão do formulário
+
+    const formData = new FormData()
+    formData.append('name', name)
+    formData.append('inShelf', naPrateleira)
+    formData.append('linha', linha)
+    formData.append('column', coluna)
+    formData.append('status', status)
+    formData.append('image', file)
     {
-      shelf === ""
-        ? formData.append("sectionId", section)
-        : formData.append("shelfId", shelf);
+      shelf === ''
+        ? formData.append('sectionId', section)
+        : formData.append('shelfId', shelf)
     }
 
     try {
-      let response;
-      response = await app.post("/equipment", formData);
+      let response
+      response = await app.post('/equipment', formData)
       if (response.status === 201) {
         Toast.fire({
-          icon: "success",
-          title: "Equipamento criado com sucesso",
-        });
-        closeModal();
+          icon: 'success',
+          title: 'Equipamento criado com sucesso'
+        })
+        closeModal()
         setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+          window.location.reload()
+        }, 1750)
       }
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
-      alert("Item adicionado com sucesso");
     } catch (error) {
-      console.error(error);
-      // alert(error.response)
+      console.error(error)
     }
-  };
+  }
 
-  const handleStorageTypeChange = (e) => {
-    const value = e.target.value;
-    setNaPrateleira(value);
+  const handleStorageTypeChange = e => {
+    const value = e.target.value
+    setNaPrateleira(value)
 
-    if (value === "true") {
-      setSection(""); // Limpa a seção quando for prateleira
+    if (value === 'true') {
+      setSection('') // Limpa a seção quando for prateleira
     } else {
-      setShelf(""); // Limpa a prateleira quando for seção
+      setShelf('') // Limpa a prateleira quando for seção
     }
-  };
+  }
 
   const Toast = Swal.mixin({
     toast: true,
-    position: "top-end",
+    position: 'top-end',
     showConfirmButton: false,
-    timer: 1500,
+    timer: 1750,
     timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.onmouseenter = Swal.stopTimer;
-      toast.onmouseleave = Swal.resumeTimer;
-    },
-  });
+    didOpen: toast => {
+      toast.onmouseenter = Swal.stopTimer
+      toast.onmouseleave = Swal.resumeTimer
+    }
+  })
 
   return (
     <div className="flex flex-col w-full">
@@ -118,7 +120,7 @@ export function AddItem({ closeModal }) {
                 className="border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue w-full text-sm"
                 id="Name"
                 placeholder="Digite o nome do item"
-                onChange={(e) => setName(e.target.value)}
+                onChange={e => setName(e.target.value)}
               />
             </div>
             <div className="flex flex-col justify-start items-start w-1/2 space-y-1">
@@ -138,14 +140,14 @@ export function AddItem({ closeModal }) {
             </div>
           </div>
           <div className="flex flex-row justify-between items-center space-x-4 py-2 w-full">
-            {naPrateleira === "true" ? (
+            {naPrateleira === 'true' ? (
               <div className="flex flex-col justify-start items-start w-1/2 space-y-1">
                 <label htmlFor="inputState">Prateleira</label>
                 <select
-                  onChange={(e) => setShelf(e.target.value)}
+                  onChange={e => setShelf(e.target.value)}
                   id="inputState"
                   className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-                  value={shelf === null ? "" : shelf} // Garante que o valor de shelf é refletido corretamente
+                  value={shelf === null ? '' : shelf} // Garante que o valor de shelf é refletido corretamente
                 >
                   <option value="" disabled>
                     Selecione a Prateleira
@@ -157,7 +159,7 @@ export function AddItem({ closeModal }) {
                         <option key={index + 1} value={item.id}>
                           {item.name}
                         </option>
-                      );
+                      )
                     })}
                 </select>
               </div>
@@ -165,10 +167,10 @@ export function AddItem({ closeModal }) {
               <div className="flex flex-col justify-start items-start w-1/2 space-y-1">
                 <label htmlFor="inputState">Seção</label>
                 <select
-                  onChange={(e) => setSection(e.target.value)}
+                  onChange={e => setSection(e.target.value)}
                   id="inputState"
                   className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-                  value={section === null ? "" : section} // Garante que o valor de section é refletido corretamente
+                  value={section === null ? '' : section} // Garante que o valor de section é refletido corretamente
                 >
                   <option value="" disabled>
                     Selecione a Seção
@@ -180,7 +182,7 @@ export function AddItem({ closeModal }) {
                         <option key={index + 1} value={item.id}>
                           {item.name}
                         </option>
-                      );
+                      )
                     })}
                 </select>
               </div>
@@ -191,7 +193,7 @@ export function AddItem({ closeModal }) {
               <label htmlFor="inputState">Status</label>
               <select
                 id="inputState"
-                onChange={(e) => setStatus(e.target.value)}
+                onChange={e => setStatus(e.target.value)}
                 className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
                 value={status}
               >
@@ -211,7 +213,7 @@ export function AddItem({ closeModal }) {
               <label htmlFor="inputState">Coluna</label>
               <select
                 id="inputState"
-                onChange={(e) => setColuna(e.target.value)}
+                onChange={e => setColuna(e.target.value)}
                 className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
                 value={coluna}
               >
@@ -229,7 +231,7 @@ export function AddItem({ closeModal }) {
               <label htmlFor="inputState">Linha</label>
               <select
                 id="inputState"
-                onChange={(e) => setLinha(e.target.value)}
+                onChange={e => setLinha(e.target.value)}
                 className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
                 value={linha}
               >
@@ -251,7 +253,7 @@ export function AddItem({ closeModal }) {
             type="file"
             className="cursor-pointer"
             id="Image"
-            onChange={(e) => setFile(e.target.files[0])}
+            onChange={e => setFile(e.target.files[0])}
           />
         </div>
         <div className="flex flex-row justify-end space-x-2 py-5">
@@ -263,12 +265,15 @@ export function AddItem({ closeModal }) {
           </button>
           <button
             onClick={handleAddItem}
-            className=" text-white bg-color_blue hover:opacity-80 rounded-md py-1 px-2"
+            disabled={!finishForm}
+            className={`text-white bg-color_blue rounded-md py-1 px-2 ${
+              !finishForm ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-80'
+            }`}
           >
             Salvar
           </button>
         </div>
       </form>
     </div>
-  );
+  )
 }

@@ -93,20 +93,25 @@ export function Home() {
         <div className="w-full  px-10">
           <p className="text-lg">Prateleira</p>
           {/* Card */}
-          {filtrarEquipamentos().map((equipamento, i) => {
+          {/* {filtrarEquipamentos().map((equipamento, i) => {
             return (
               <Card key={i} nomeProduto="Câmera" prateleira="01" posicao="A2" />
             )
-          })}
+          })} */}
+          <div className="flex flex-row space-x-4">
+            {cards.map((item, index) => {
+              return <Card key={index} item={item} />
+            })}
+          </div>
         </div>
         <div className="w-full mt-3 px-10">
           <p className="text-lg">Seção</p>
           {/* Card */}
-          {filtrarEquipamentos().map((equipamento, i) => {
+          {/* {filtrarEquipamentos().map((equipamento, i) => {
             return (
               <Card key={i} nomeProduto="Câmera" prateleira="01" posicao="A2" />
             )
-          })}
+          })} */}
         </div>
       </div>
       <Modal
