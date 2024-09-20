@@ -94,7 +94,13 @@ export function Card({ item }) {
   }
   return (
     <div className="bg-color_blue w-1/4 flex flex-col text-white font-medium rounded-lg ">
-      <img src={item.image} alt="Foto do Equipamento" />
+      <div className="w-full h-48 flex items-center justify-center bg-color_blue rounded-t-lg">
+        <img
+          src={item.image}
+          className="max-h-full max-w-full object-contain"
+          alt="Foto do Equipamento"
+        />
+      </div>
       <div className="p-3">
         <div className="flex justify-end">
           <div
@@ -109,13 +115,17 @@ export function Card({ item }) {
             {formatStatus(item.status)}
           </div>
         </div>
-        <p className="text-xl ">{item.name}</p>
-        {item.inShelf ? (
-          <p className="text-lg ">{item.shelf.name}</p>
-        ) : (
-          <p className="text-lg ">{item.section.name}</p>
-        )}
-
+        <div>
+          <p className="text-xl ">{item.name}</p>
+          {item.inShelf ? (
+            <p className="text-lg ">{item.shelf.name}</p>
+          ) : (
+            <p className="text-lg ">{item.section.name}</p>
+          )}
+          <p className="text-lg ">{item.category?.name}</p>
+          <p className="text-lg ">{item.linha}</p>
+          <p className="text-lg ">{item.column}</p>
+        </div>
         <div className="flex flex-row items-center justify-center mt-2 space-x-2 ">
           <div
             className="cursor-pointer text-md bg-color_green rounded-2xl w-full flex items-center justify-center"
