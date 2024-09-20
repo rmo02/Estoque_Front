@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react'
-import logo from '../../assets/logo.png'
+import React, { useEffect, useState } from 'react'
 import { app } from '../../api/api'
+import Modal from 'react-modal'
 import Swal from 'sweetalert2'
+import { EditItem } from '../Modals/EditItem'
 
 export function Card({ item }) {
+  const [modalIsOpen, setModalIsOpen] = useState(false)
   function formatStatus(status) {
     switch (status) {
       case 'DISPONIVEL':
@@ -17,32 +19,9 @@ export function Card({ item }) {
     }
   }
 
-  // function deleteItem(id) {
-  //   console.log(id)
-  //   // try {
-  //   //   let response
-  //   //   response = app.delete('/equipment', id)
-  //   //   console.log(response.status)
-  //   //   // if (response.status === 201) {
-  //   //   //   Toast.fire({
-  //   //   //     icon: 'success',
-  //   //   //     title: 'Equipamento criado com sucesso'
-  //   //   //   })
-  //   //   //   closeModal()
-  //   //   //   setTimeout(() => {
-  //   //   //     window.location.reload()
-  //   //   //   }, 1750)
-  //   //   // }
-  //   // } catch (error) {
-  //   //   console.error(error)
-  //   // }
-  // }
-
   function deleteItem(id) {
-    console.log(id)
     try {
       const response = app.delete(`/equipment/${id}`)
-      console.log(response)
 
       Toast.fire({
         icon: 'error',
@@ -93,6 +72,26 @@ export function Card({ item }) {
     }
   })
 
+  function openModal() {
+    setModalIsOpen(true)
+  }
+
+  function closeModal() {
+    setModalIsOpen(false)
+  }
+
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      transform: 'translate(-50%, -50%)',
+      width: '40%',
+      height: '75%',
+      borderRadius: '0.5rem'
+    }
+  }
   return (
     <div className="bg-color_blue w-1/4 flex flex-col text-white font-medium rounded-lg ">
       <img src={item.image} alt="Foto do Equipamento" />
@@ -118,7 +117,10 @@ export function Card({ item }) {
         )}
 
         <div className="flex flex-row items-center justify-center mt-2 space-x-2 ">
-          <div className="cursor-pointer text-md bg-color_green rounded-2xl w-full flex items-center justify-center">
+          <div
+            className="cursor-pointer text-md bg-color_green rounded-2xl w-full flex items-center justify-center"
+            onClick={openModal}
+          >
             Editar
           </div>
           <div
@@ -129,6 +131,16 @@ export function Card({ item }) {
           </div>
         </div>
       </div>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Editar Item"
+        shouldCloseOnOverlayClick={false}
+        ariaHideApp={false}
+      >
+        <EditItem closeModal={closeModal} item={item} />
+      </Modal>
     </div>
   )
 }

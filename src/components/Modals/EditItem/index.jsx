@@ -3,19 +3,19 @@ import { MdClose } from 'react-icons/md'
 import { app } from '../../../api/api'
 import Swal from 'sweetalert2'
 
-export function AddItem({ closeModal }) {
+export function EditItem({ closeModal, item }) {
   const [name, setName] = useState('')
   const [categoria, setCategoria] = useState([])
-  const [category, setCategory] = useState('')
-  const [naPrateleira, setNaPrateleira] = useState('true')
+  const [category, setCategory] = useState(item.category.name)
+  const [naPrateleira, setNaPrateleira] = useState(item.inShelf)
   const [prateleira, setPrateleira] = useState([])
-  const [shelf, setShelf] = useState('')
+  const [shelf, setShelf] = useState(item.shelf?.name)
   const [secao, setSecao] = useState([])
-  const [section, setSection] = useState('')
-  const [linha, setLinha] = useState('')
-  const [coluna, setColuna] = useState('')
+  const [section, setSection] = useState(item.section?.name)
+  const [linha, setLinha] = useState(item.linha)
+  const [coluna, setColuna] = useState(item.column)
   const [file, setFile] = useState(null)
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState(item.status)
 
   useEffect(() => {
     const getShelves = async () => {
@@ -113,13 +113,13 @@ export function AddItem({ closeModal }) {
   return (
     <div className="flex flex-col h-full w-full justify-between">
       <div className="flex flex-row justify-between items-center font-semibold">
-        <p>Adicionar item</p>
+        <p>Editar Item</p>
         <MdClose
           className="cursor-pointer hover:bg-color_grey_bg hover:rounded-full"
           onClick={closeModal}
         />
       </div>
-      <p>Preencha os campos abaixo para adicionar um novo item ao estoque</p>
+      <p>Preencha os campos abaixo para editar o item do estoque</p>
       <form className="flex flex-col space-y-2">
         <div className="flex flex-row justify-between items-center space-x-4 w-full">
           {/* NOME */}
@@ -130,6 +130,7 @@ export function AddItem({ closeModal }) {
               className="border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue w-full text-sm"
               id="Name"
               placeholder="Digite o nome do item"
+              value={item.name}
               onChange={e => setName(e.target.value)}
             />
           </div>
@@ -145,14 +146,14 @@ export function AddItem({ closeModal }) {
                 Selecione a Categoria
               </option>
               {categoria
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((item, index) => {
-                    return (
-                      <option key={index + 1} value={item.id}>
-                        {item.name}
-                      </option>
-                    )
-                  })}
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((item, index) => {
+                  return (
+                    <option key={index + 1} value={item.id}>
+                      {item.name}
+                    </option>
+                  )
+                })}
             </select>
           </div>
         </div>
@@ -165,7 +166,7 @@ export function AddItem({ closeModal }) {
               id="inputState"
               onChange={handleStorageTypeChange}
               className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-              value={naPrateleira} // Garante que o valor correto está refletido
+              value={item.inShelf} // Garante que o valor correto está refletido
             >
               <option value="" disabled>
                 Selecione o Tipo de Armazenamento
@@ -233,7 +234,7 @@ export function AddItem({ closeModal }) {
               id="inputState"
               onChange={e => setColuna(e.target.value)}
               className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-              value={coluna}
+              value={item.column}
             >
               <option value="" disabled>
                 Selecione a Coluna
@@ -251,7 +252,7 @@ export function AddItem({ closeModal }) {
               id="inputState"
               onChange={e => setLinha(e.target.value)}
               className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-              value={linha}
+              value={item.linha}
             >
               <option value="" disabled>
                 Selecione a Linha

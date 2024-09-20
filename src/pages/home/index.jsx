@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import { app } from '../../api/api'
 import { Header } from '../../components/Header'
-import { FaEdit, FaEye, FaSearch, FaTrash } from 'react-icons/fa'
+import { FaSearch } from 'react-icons/fa'
 import Modal from 'react-modal'
-import logo from '../../assets/logo.png'
 import { Card } from '../../components/Card'
 import { AddItem } from '../../components/Modals/AddItem'
 
@@ -24,9 +23,11 @@ export function Home() {
   function openModal() {
     setModalIsOpen(true)
   }
+
   function closeModal() {
     setModalIsOpen(false)
   }
+
   const customStyles = {
     content: {
       top: '50%',
@@ -39,24 +40,7 @@ export function Home() {
       borderRadius: '0.5rem'
     }
   }
-  const getEquipamentos = async () => {
-    try {
-      const res = await api.get('/', {})
-      setData(res.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
-  function filtrarEquipamentos() {
-    if (pesquisar === '') {
-      return data
-    } else {
-      return data.filter(equipamento =>
-        equipamento.Nome?.toLowerCase().includes(pesquisar.toLowerCase())
-      )
-    }
-  }
   return (
     <div className="flex flex-col w-full h-screen bg-gray-100 font-poppins">
       <Header />
@@ -118,7 +102,7 @@ export function Home() {
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
         style={customStyles}
-        contentLabel="Adicionar Novo Ítem"
+        contentLabel="Adicionar Novo Item"
         shouldCloseOnOverlayClick={false}
         ariaHideApp={false}
       >
