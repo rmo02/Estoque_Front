@@ -47,7 +47,7 @@ export function Home() {
 
       <div className="mx-4 my-1 flex flex-col md:flex-row justify-between items-center">
         <div
-          className="cursor-pointer text-md px-6 py-2 bg-color_blue text-white rounded-2xl flex items-center justify-center mb-2 md:mb-0"
+          className="cursor-pointer text-md px-6 py-1 bg-color_blue text-white rounded-2xl flex items-center justify-center mb-2 md:mb-0"
           onClick={openModal}
         >
           Adicionar Item

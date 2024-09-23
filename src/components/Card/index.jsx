@@ -95,7 +95,7 @@ export function Card({ item }) {
   };
 
   return (
-    <div className="bg-color_blue w-full max-w-xs flex flex-col text-white font-medium rounded-lg shadow-lg overflow-hidden">
+    <div className="bg-color_blue w-full max-w-xs flex flex-col text-white font-normal rounded-lg shadow-lg overflow-hidden">
       <div className="w-full h-28 bg-color_blue rounded-t-lg overflow-hidden">
         <img
           src={item.image}
