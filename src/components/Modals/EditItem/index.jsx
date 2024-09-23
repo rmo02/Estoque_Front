@@ -1,114 +1,119 @@
-import { useEffect, useState } from 'react'
-import { MdClose } from 'react-icons/md'
-import { app } from '../../../api/api'
-import Swal from 'sweetalert2'
+import { useEffect, useState } from "react";
+import { MdClose } from "react-icons/md";
+import { app } from "../../../api/api";
+import Swal from "sweetalert2";
 
 export function EditItem({ closeModal, item }) {
-  const [name, setName] = useState('')
-  const [categoria, setCategoria] = useState([])
-  const [category, setCategory] = useState(item.category.name)
-  const [naPrateleira, setNaPrateleira] = useState(item.inShelf)
-  const [prateleira, setPrateleira] = useState([])
-  const [shelf, setShelf] = useState(item.shelf?.name)
-  const [secao, setSecao] = useState([])
-  const [section, setSection] = useState(item.section?.name)
-  const [linha, setLinha] = useState(item.linha)
-  const [coluna, setColuna] = useState(item.column)
-  const [file, setFile] = useState(null)
-  const [status, setStatus] = useState(item.status)
+  //mudanças
+  const [name, setName] = useState(item.name || "");
+  const [category, setCategory] = useState(item.category?.id || "");
+  const [categoria, setCategoria] = useState([]);
+  const [naPrateleira, setNaPrateleira] = useState(item.inShelf);
+  const [prateleira, setPrateleira] = useState([]);
+  const [shelf, setShelf] = useState(item.shelf?.id || "");
+  const [secao, setSecao] = useState([]);
+  const [section, setSection] = useState(item.section?.id || "");
+  const [linha, setLinha] = useState(item.linha || "");
+  const [coluna, setColuna] = useState(item.column || "");
+  const [file, setFile] = useState(item.image || null);
+  const [status, setStatus] = useState(item.status || "");
 
   useEffect(() => {
     const getShelves = async () => {
-      const response = await app.get('/shelves')
-      setPrateleira(response.data)
-    }
+      const response = await app.get("/shelves");
+      setPrateleira(response.data);
+    };
     const getSections = async () => {
-      const response = await app.get('/section')
-      setSecao(response.data)
-    }
+      const response = await app.get("/section");
+      setSecao(response.data);
+    };
     const getCategory = async () => {
-      const response = await app.get('/category')
-      setCategoria(response.data)
-    }
-    getCategory()
-    getShelves()
-    getSections()
-  }, [])
+      const response = await app.get("/category");
+      setCategoria(response.data);
+    };
+    getCategory();
+    getShelves();
+    getSections();
+  }, []);
 
   const finishForm =
     name.length !== 0 &&
     linha.length !== 0 &&
     coluna.length !== 0 &&
     status.length !== 0 &&
-    ((section.length !== 0 && shelf === '') ||
-      (shelf.length !== 0 && section === ''))
+    ((section.length !== 0 && shelf === "") ||
+      (shelf.length !== 0 && section === ""));
 
-  const handleAddItem = async event => {
-    event.preventDefault() // Previne o comportamento padrão do formulário
+  const handleEditItem = async (event) => {
+    event.preventDefault(); // Previne o comportamento padrão do formulário
 
-    const formData = new FormData()
-    formData.append('name', name)
-    formData.append('categoryId', category)
-    formData.append('inShelf', naPrateleira)
-    formData.append('linha', linha)
-    formData.append('column', coluna)
-    formData.append('status', status)
-    formData.append('image', file)
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("categoryId", category);
+    formData.append("inShelf", naPrateleira);
+    formData.append("linha", linha);
+    formData.append("column", coluna);
+    formData.append("status", status);
+    formData.append("image", file);
     {
-      shelf === ''
-        ? formData.append('sectionId', section)
-        : formData.append('shelfId', shelf)
+      shelf === ""
+        ? formData.append("sectionId", section) && setShelf(null)
+        : formData.append("shelfId", shelf) && setSection(null);
     }
 
     try {
-      let response
-      response = await app.post('/equipment', formData)
-      if (response.status === 201) {
+      const response = await app.put(`/equipment/${item.id}`, formData); // Edita o item existente
+      console.log(response);
+      console.log(section);
+      console.log(shelf);
+      if (response.status === 200) {
         Toast.fire({
-          icon: 'success',
-          title: 'Equipamento criado com sucesso'
-        })
-        closeModal()
+          icon: "success",
+          title: "Equipamento editado com sucesso",
+        });
+        closeModal();
         setTimeout(() => {
-          window.location.reload()
-        }, 1750)
+          window.location.reload();
+        }, 1750);
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
-  const handleStorageTypeChange = e => {
-    const value = e.target.value
-    setNaPrateleira(value)
+  const handleStorageTypeChange = (e) => {
+    const value = e.target.value === "true"; // converte o valor para boolean
+    setNaPrateleira(value);
 
-    if (value === 'true') {
-      setSection('') // Limpa a seção quando for prateleira
+    if (value) {
+      setSection(""); // Limpa a seção quando for prateleira
     } else {
-      setShelf('') // Limpa a prateleira quando for seção
+      setShelf(""); // Limpa a prateleira quando for seção
     }
-  }
+  };
 
   const Toast = Swal.mixin({
     toast: true,
-    position: 'top-end',
+    position: "top-end",
     showConfirmButton: false,
     timer: 1750,
     timerProgressBar: true,
-    didOpen: toast => {
-      toast.onmouseenter = Swal.stopTimer
-      toast.onmouseleave = Swal.resumeTimer
-    }
-  })
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    },
+  });
 
-  const handleCheckboxChange = e => {
-    const { value, checked } = e.target
+  const handleCheckboxChange = (e) => {
+    const { value, checked } = e.target;
     if (checked) {
-      setStatus(value) // Atualiza o estado com o valor do checkbox selecionado
+      setStatus(value); // Atualiza o estado com o valor do checkbox selecionado
     } else {
-      setStatus('') // Desmarca todos (opcional)
+      setStatus(""); // Desmarca todos (opcional)
     }
-  }
+  };
+
+  console.log(item);
 
   return (
     <div className="flex flex-col h-full w-full justify-between">
@@ -130,17 +135,17 @@ export function EditItem({ closeModal, item }) {
               className="border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue w-full text-sm"
               id="Name"
               placeholder="Digite o nome do item"
-              value={item.name}
-              onChange={e => setName(e.target.value)}
+              defaultValue={item.name}
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div className="flex flex-col justify-start items-start w-1/2 space-y-1">
             <label htmlFor="inputState">Categoria</label>
             <select
               id="inputState"
-              onChange={e => setCategory(e.target.value)}
+              onChange={(e) => setCategory(e.target.value)}
               className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-              value={category === null ? '' : category}
+              value={category === null ? "" : category}
             >
               <option value="" disabled>
                 Selecione a Categoria
@@ -152,7 +157,7 @@ export function EditItem({ closeModal, item }) {
                     <option key={index + 1} value={item.id}>
                       {item.name}
                     </option>
-                  )
+                  );
                 })}
             </select>
           </div>
@@ -166,7 +171,7 @@ export function EditItem({ closeModal, item }) {
               id="inputState"
               onChange={handleStorageTypeChange}
               className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-              value={item.inShelf} // Garante que o valor correto está refletido
+              defaultValue={item.inShelf} // Garante que o valor correto está refletido
             >
               <option value="" disabled>
                 Selecione o Tipo de Armazenamento
@@ -175,15 +180,15 @@ export function EditItem({ closeModal, item }) {
               <option value="false">Seção</option>
             </select>
           </div>
-          {naPrateleira === 'true' ? (
+          {naPrateleira ? (
             // PRATELEIRA
             <div className="flex flex-col justify-start items-start w-1/2 space-y-1">
               <label htmlFor="inputState">Prateleira</label>
               <select
-                onChange={e => setShelf(e.target.value)}
+                onChange={(e) => setShelf(e.target.value)}
                 id="inputState"
                 className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-                value={shelf === null ? '' : shelf} // Garante que o valor de shelf é refletido corretamente
+                value={shelf === null ? "" : shelf} // Garante que o valor de shelf é refletido corretamente
               >
                 <option value="" disabled>
                   Selecione a Prateleira
@@ -195,7 +200,7 @@ export function EditItem({ closeModal, item }) {
                       <option key={index + 1} value={item.id}>
                         {item.name}
                       </option>
-                    )
+                    );
                   })}
               </select>
             </div>
@@ -204,10 +209,10 @@ export function EditItem({ closeModal, item }) {
             <div className="flex flex-col justify-start items-start w-1/2 space-y-1">
               <label htmlFor="inputState">Seção</label>
               <select
-                onChange={e => setSection(e.target.value)}
+                onChange={(e) => setSection(e.target.value)}
                 id="inputState"
                 className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-                value={section === null ? '' : section} // Garante que o valor de section é refletido corretamente
+                value={section === null ? "" : section} // Garante que o valor de section é refletido corretamente
               >
                 <option value="" disabled>
                   Selecione a Seção
@@ -219,7 +224,7 @@ export function EditItem({ closeModal, item }) {
                       <option key={index + 1} value={item.id}>
                         {item.name}
                       </option>
-                    )
+                    );
                   })}
               </select>
             </div>
@@ -232,9 +237,9 @@ export function EditItem({ closeModal, item }) {
             <label htmlFor="inputState">Coluna</label>
             <select
               id="inputState"
-              onChange={e => setColuna(e.target.value)}
+              onChange={(e) => setColuna(e.target.value)}
               className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-              value={item.column}
+              defaultValue={item.column}
             >
               <option value="" disabled>
                 Selecione a Coluna
@@ -250,9 +255,9 @@ export function EditItem({ closeModal, item }) {
             <label htmlFor="inputState">Linha</label>
             <select
               id="inputState"
-              onChange={e => setLinha(e.target.value)}
+              onChange={(e) => setLinha(e.target.value)}
               className="w-full border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue text-sm"
-              value={item.linha}
+              defaultValue={item.linha}
             >
               <option value="" disabled>
                 Selecione a Linha
@@ -274,9 +279,9 @@ export function EditItem({ closeModal, item }) {
               <input
                 className="w-4 h-4 rounded-full appearance-none border border-gray-400 checked:bg-blue-600 checked:border-transparent focus:outline-none"
                 type="checkbox"
-                value="DISPONIVEL"
-                checked={status === 'DISPONIVEL'}
-                onChange={e => handleCheckboxChange(e)}
+                defaultValue="DISPONIVEL"
+                checked={status === "DISPONIVEL"}
+                onChange={(e) => handleCheckboxChange(e)}
               />
               <span className="ml-2">Disponível</span>
             </label>
@@ -285,9 +290,9 @@ export function EditItem({ closeModal, item }) {
               <input
                 className="w-4 h-4 rounded-full appearance-none border border-gray-400 checked:bg-blue-600 checked:border-transparent focus:outline-none"
                 type="checkbox"
-                value="EM_USO"
-                checked={status === 'EM_USO'}
-                onChange={e => handleCheckboxChange(e)}
+                defaultValue="EM_USO"
+                checked={status === "EM_USO"}
+                onChange={(e) => handleCheckboxChange(e)}
               />
               <span className="ml-2">Em Uso</span>
             </label>
@@ -295,9 +300,9 @@ export function EditItem({ closeModal, item }) {
               <input
                 className="w-4 h-4 rounded-full appearance-none border border-gray-400 checked:bg-blue-600 checked:border-transparent focus:outline-none"
                 type="checkbox"
-                value="EM_MANUTENCAO"
-                checked={status === 'EM_MANUTENCAO'}
-                onChange={e => handleCheckboxChange(e)}
+                defaultValue="EM_MANUTENCAO"
+                checked={status === "EM_MANUTENCAO"}
+                onChange={(e) => handleCheckboxChange(e)}
               />
               <span className="ml-2">Em Manutenção</span>
             </label>
@@ -311,7 +316,7 @@ export function EditItem({ closeModal, item }) {
             type="file"
             className="cursor-pointer"
             id="Image"
-            onChange={e => setFile(e.target.files[0])}
+            onChange={(e) => setFile(e.target.files[0])}
           />
         </div>
 
@@ -324,10 +329,10 @@ export function EditItem({ closeModal, item }) {
             Cancelar
           </button>
           <button
-            onClick={handleAddItem}
+            onClick={handleEditItem}
             disabled={!finishForm}
             className={`text-white bg-color_blue rounded-md py-1 px-2 ${
-              !finishForm ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-80'
+              !finishForm ? "opacity-50 cursor-not-allowed" : "hover:opacity-80"
             }`}
           >
             Salvar
@@ -335,5 +340,5 @@ export function EditItem({ closeModal, item }) {
         </div>
       </form>
     </div>
-  )
+  );
 }
