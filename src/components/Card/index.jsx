@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { app } from "../../api/api";
 import Modal from "react-modal";
 import Swal from "sweetalert2";
