@@ -1,5 +1,5 @@
-import { MdArrowForwardIos } from 'react-icons/md'
-import { Link } from 'react-router-dom'
+import { MdArrowForwardIos } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 function Breadcrumb() {
   return (
@@ -8,7 +8,7 @@ function Breadcrumb() {
         <li className="px-4 inline-flex items-center">
           <Link
             to="/"
-            className="text-color_grey hover:text-color_blue flex-row items-center"
+            className="text-color_grey hover:text-color_blue flex-row items-center hover:underline"
           >
             Estoque
           </Link>
@@ -26,7 +26,7 @@ function Breadcrumb() {
         </li>
       </ol>
     </nav>
-  )
+  );
 }
 
-export default Breadcrumb
+export default Breadcrumb;

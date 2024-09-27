@@ -1,103 +1,110 @@
-import { useEffect, useState } from 'react'
-import { app } from '../../api/api'
-import Modal from 'react-modal'
-import { EditCategory } from '../Modals/Category/EditCategory'
-import Swal from 'sweetalert2'
+import { useEffect, useState } from "react";
+import { app } from "../../api/api";
+import Modal from "react-modal";
+import { EditCategory } from "../Modals/Option/EditCategory";
+import Swal from "sweetalert2";
 
-export function Table({ searchTerm }) {
-  const [dados, setDados] = useState([])
-  const [modalIsOpen, setModalIsOpen] = useState(false)
-  const [item, setItem] = useState('')
+export function Table({ searchTerm, options }) {
+  const [dados, setDados] = useState([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [item, setItem] = useState("");
+
+  console.log(options);
 
   function deleteCategory(id) {
     try {
-      const response = app.delete(`/category/${id}`)
-
+      const response = app.delete(`/category/${id}`);
       Toast.fire({
-        icon: 'error',
-        title: 'Categoria excluída com sucesso'
-      })
-      setTimeout(() => {
-        window.location.reload()
-      }, 1500)
+        icon: "error",
+        title: "Categoria excluída com sucesso",
+      });
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
+
+      // Atualizar o estado removendo o item excluído
+      setDados((prevDados) => prevDados.filter((item) => item.id !== id));
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
-  const showConfirmationToDelete = id => {
-    console.log(id)
+  const showConfirmationToDelete = (id) => {
+    console.log(id);
     Swal.fire({
-      title: 'Excluir Categoria',
-      text: 'Você tem certeza que deseja excluir esta Categoria? ',
-      icon: 'warning',
+      title: "Excluir Categoria",
+      text: "Você tem certeza que deseja excluir esta Categoria? ",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sim',
-      cancelButtonText: 'Não'
-    }).then(async result => {
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sim",
+      cancelButtonText: "Não",
+    }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          deleteCategory(id)
+          await deleteCategory(id); // Chamar função para deletar
         } catch (error) {
-          console.error('Erro ao excluir categoria:', error)
+          console.error("Erro ao excluir categoria:", error);
           Toast.fire({
-            icon: 'error',
-            title: 'Ocorreu um erro ao excluir a categoria. Tente novamente.'
-          })
+            icon: "error",
+            title: "Ocorreu um erro ao excluir a categoria. Tente novamente.",
+          });
         }
       }
-    })
-  }
+    });
+  };
+
   const Toast = Swal.mixin({
     toast: true,
-    position: 'top-end',
+    position: "top-end",
     showConfirmButton: false,
     timer: 1500,
     timerProgressBar: true,
-    didOpen: toast => {
-      toast.onmouseenter = Swal.stopTimer
-      toast.onmouseleave = Swal.resumeTimer
-    }
-  })
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    },
+  });
 
   function openModal(items) {
-    setModalIsOpen(true)
-    setItem(items)
+    setModalIsOpen(true);
+    setItem(items);
   }
 
   function closeModal() {
-    setModalIsOpen(false)
+    setModalIsOpen(false);
   }
 
   const customStyles = {
     content: {
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      transform: 'translate(-50%, -50%)',
-      width: '50%',
-      height: '35%',
-      borderRadius: '0.5rem'
-    }
-  }
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      transform: "translate(-50%, -50%)",
+      width: "50%",
+      height: "35%",
+      borderRadius: "0.5rem",
+    },
+  };
 
   useEffect(() => {
     const getData = async () => {
-      const response = await app.get(`/category`)
-      const sortedData = response.data.sort((a, b) =>
-        a.name.localeCompare(b.name)
-      )
-      setDados(sortedData)
-    }
-    getData()
-  }, [])
+      // const response = await app.get(`/category`);
+      try {
+        const sortedData = options.sort((a, b) => a.name.localeCompare(b.name));
+        setDados(sortedData);
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      }
+    };
+    getData();
+  }, []);
 
-  const filteredData = dados.filter(items =>
+  const filteredData = dados.filter((items) =>
     items.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  );
 
   return (
     <div>
@@ -136,7 +143,7 @@ export function Table({ searchTerm }) {
                   </div>
                 </td>
               </tr>
-            )
+            );
           })}
         </tbody>
       </table>
@@ -151,5 +158,5 @@ export function Table({ searchTerm }) {
         <EditCategory closeModal={closeModal} item={item} />
       </Modal>
     </div>
-  )
+  );
 }
