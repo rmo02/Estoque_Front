@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { MdClose } from 'react-icons/md'
-import { app } from '../../../api/api'
+import { app } from '../../../../api/api'
 import Swal from 'sweetalert2'
 import { IoMdTrash } from 'react-icons/io'
 
 export function EditItem({ closeModal, item }) {
-  //mudanças
+  console.log(item)
+
   const [name, setName] = useState(item.name || '')
   const [category, setCategory] = useState(item.category?.id || '')
   const [categoria, setCategoria] = useState([])
@@ -18,6 +19,8 @@ export function EditItem({ closeModal, item }) {
   const [coluna, setColuna] = useState(item.column || '')
   const [status, setStatus] = useState(item.status || '')
   const [file, setFile] = useState(item.image || null)
+
+  console.log(naPrateleira)
 
   useEffect(() => {
     const getShelves = async () => {

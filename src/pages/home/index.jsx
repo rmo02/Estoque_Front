@@ -4,7 +4,7 @@ import { Header } from '../../components/Header'
 import { FaSearch } from 'react-icons/fa'
 import Modal from 'react-modal'
 import { Card } from '../../components/Card'
-import { AddItem } from '../../components/Modals/AddItem'
+import { AddItem } from '../../components/Modals/Equipments/AddItem'
 
 export function Home() {
   const [modalIsOpen, setModalIsOpen] = useState(false)

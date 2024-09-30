@@ -4,21 +4,40 @@ import { app } from "../../../../api/api";
 import Swal from "sweetalert2";
 import { TypeOption } from "../../../../Hooks/TypeOption";
 
-export function EditCategory({ closeModal, item }) {
+export function EditOption({ closeModal, item }) {
   const [name, setName] = useState(item.name);
   const { isCategorias, isPrateleiras, isSecoes } = TypeOption();
 
   const finishForm = name.length !== 0;
 
+  let typeUrl = isCategorias
+    ? 'category'
+    : isPrateleiras
+    ? 'shelves'
+    : isSecoes
+    ? 'section'
+    : ''
+
+  let typeText = isCategorias
+    ? 'categoria'
+    : isPrateleiras
+    ? 'prateleira'
+    : isSecoes
+    ? 'seção'
+    : ''
+
+  const capitalizedTypeText =
+    typeText.charAt(0).toUpperCase() + typeText.slice(1)
+    
   const handleEditCategory = async (event) => {
     event.preventDefault();
 
     try {
-      const response = await app.put(`/category/${item.id}`, { name: name });
+      const response = await app.put(`${typeUrl}/${item.id}`, { name: name });
       if (response.status === 200) {
         Toast.fire({
           icon: "success",
-          title: "Categoria editada com sucesso",
+          title: `${capitalizedTypeText} editada com sucesso`,
         });
         closeModal();
         setTimeout(() => {
@@ -45,13 +64,13 @@ export function EditCategory({ closeModal, item }) {
   return (
     <div className="flex flex-col h-full w-full space-y-2 justify-between">
       <div className="flex flex-row justify-between items-center font-semibold">
-        <p>Editar Categoria</p>
+        <p>Editar {capitalizedTypeText}</p>
         <MdClose
           className="cursor-pointer hover:bg-color_grey_bg hover:rounded-full"
           onClick={closeModal}
         />
       </div>
-      <p>Preencha o campo abaixo para editar a categoria</p>
+      <p>Preencha o campo abaixo para editar a {typeText}</p>
 
       {/* NOME */}
       <div className="flex flex-col justify-start items-start w-full space-y-1">
@@ -60,7 +79,7 @@ export function EditCategory({ closeModal, item }) {
           type="name"
           className="border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue w-full text-sm"
           id="Name"
-          placeholder="Digite o nome da categoria"
+          placeholder={`Digite o nome da ${typeText}`}
           defaultValue={item.name}
           onChange={(e) => setName(e.target.value)}
         />

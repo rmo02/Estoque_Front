@@ -8,9 +8,12 @@ import { useNavigate } from 'react-router-dom'
 
 export function Menu({ closeModal }) {
   const navigate = useNavigate()
+  
   function navigateTo(route) {
     navigate(`/${route}`)
+    closeModal()
   }
+
   return (
     <div className="flex flex-col text-lg text-color_blue font-poppins relative select-none">
       <div className="absolute top-0 right-0">

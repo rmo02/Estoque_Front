@@ -1,107 +1,124 @@
-import { useEffect, useState } from "react";
-import { app } from "../../api/api";
-import Modal from "react-modal";
-import { EditCategory } from "../Modals/Option/EditCategory";
-import Swal from "sweetalert2";
+import { useEffect, useState } from 'react'
+import Modal from 'react-modal'
+import Swal from 'sweetalert2'
+import { app } from '../../api/api'
+import { TypeOption } from '../../Hooks/TypeOption'
+import { EditOption } from '../Modals/Option/EditOption'
 
-export function Table({ searchTerm, options }) {
-  const [dados, setDados] = useState([]);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [item, setItem] = useState("");
+export function Table({ searchTerm }) {
+  const [dados, setDados] = useState([])
+  const [modalIsOpen, setModalIsOpen] = useState(false)
+  const [item, setItem] = useState('')
+  const { options, isCategorias, isPrateleiras, isSecoes } = TypeOption()
 
-  console.log(options);
+  let typeUrl = isCategorias
+    ? 'category'
+    : isPrateleiras
+    ? 'shelves'
+    : isSecoes
+    ? 'section'
+    : ''
 
-  function deleteCategory(id) {
+  let typeText = isCategorias
+    ? 'categoria'
+    : isPrateleiras
+    ? 'prateleira'
+    : isSecoes
+    ? 'seção'
+    : ''
+
+  const capitalizedTypeText =
+    typeText.charAt(0).toUpperCase() + typeText.slice(1)
+
+  function deleteOption(id) {
     try {
-      const response = app.delete(`/category/${id}`);
+      const response = app.delete(`/${typeUrl}/${id}`)
       Toast.fire({
-        icon: "error",
-        title: "Categoria excluída com sucesso",
-      });
-
-      console.log(response.data);
+        icon: 'error',
+        title: `${capitalizedTypeText} excluída com sucesso`
+      })
 
       // Atualizar o estado removendo o item excluído
-      setDados((prevDados) => prevDados.filter((item) => item.id !== id));
+      setDados(prevDados => prevDados.filter(item => item.id !== id))
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
   }
 
-  const showConfirmationToDelete = (id) => {
+  const showConfirmationToDelete = id => {
     Swal.fire({
-      title: "Excluir Categoria",
-      text: "Você tem certeza que deseja excluir esta Categoria? ",
-      icon: "warning",
+      title: `Excluir ${typeText}`,
+      text: `Você tem certeza que deseja excluir esta ${typeText}?`,
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sim",
-      cancelButtonText: "Não",
-    }).then(async (result) => {
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sim',
+      cancelButtonText: 'Não'
+    }).then(async result => {
       if (result.isConfirmed) {
         try {
-          await deleteCategory(id); // Chamar função para deletar
+          await deleteOption(id) // Chamar função para deletar
         } catch (error) {
-          console.error("Erro ao excluir categoria:", error);
+          console.error(`Erro ao excluir ${typeText}`, error)
           Toast.fire({
-            icon: "error",
-            title: "Ocorreu um erro ao excluir a categoria. Tente novamente.",
-          });
+            icon: 'error',
+            title: `Ocorreu um erro ao excluir ${typeText} a categoria. Tente novamente.`
+          })
         }
       }
-    });
-  };
+    })
+  }
 
   const Toast = Swal.mixin({
     toast: true,
-    position: "top-end",
+    position: 'top-end',
     showConfirmButton: false,
     timer: 1500,
     timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.onmouseenter = Swal.stopTimer;
-      toast.onmouseleave = Swal.resumeTimer;
-    },
-  });
+    didOpen: toast => {
+      toast.onmouseenter = Swal.stopTimer
+      toast.onmouseleave = Swal.resumeTimer
+    }
+  })
 
   function openModal(items) {
-    setModalIsOpen(true);
-    setItem(items);
+    setModalIsOpen(true)
+    setItem(items)
   }
 
   function closeModal() {
-    setModalIsOpen(false);
+    setModalIsOpen(false)
   }
 
   const customStyles = {
     content: {
-      top: "50%",
-      left: "50%",
-      right: "auto",
-      bottom: "auto",
-      transform: "translate(-50%, -50%)",
-      width: "50%",
-      height: "35%",
-      borderRadius: "0.5rem",
-    },
-  };
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      transform: 'translate(-50%, -50%)',
+      width: '50%',
+      height: '35%',
+      borderRadius: '0.5rem'
+    }
+  }
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const sortedData = options.sort((a, b) => a.name.localeCompare(b.name));
-        setDados(sortedData);
+        const sortedData = options.sort((a, b) => a.name.localeCompare(b.name))
+        setDados(sortedData)
       } catch (error) {
-        console.error("Erro ao buscar dados:", error);
+        console.error('Erro ao buscar dados:', error)
       }
-    };
-    getData();
-  }, [options]);
+    }
+    getData()
+  }, [options])
 
-  const filteredData = dados.filter((items) =>
+  const filteredData = dados.filter(items =>
     items.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  )
 
   return (
     <div>
@@ -140,7 +157,7 @@ export function Table({ searchTerm, options }) {
                   </div>
                 </td>
               </tr>
-            );
+            )
           })}
         </tbody>
       </table>
@@ -148,12 +165,12 @@ export function Table({ searchTerm, options }) {
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
         style={customStyles}
-        contentLabel="Adicionar Nova Categoria"
+        contentLabel={`Editar Nova ${typeText}`}
         shouldCloseOnOverlayClick={false}
         ariaHideApp={false}
       >
-        <EditCategory closeModal={closeModal} item={item} />
+        <EditOption closeModal={closeModal} item={item} />
       </Modal>
     </div>
-  );
+  )
 }
