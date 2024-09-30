@@ -70,7 +70,7 @@ export function AddItem({ closeModal }) {
         closeModal();
         setTimeout(() => {
           window.location.reload();
-        }, 1750);
+        }, 1500);
       }
     } catch (error) {
       console.error(error);
@@ -92,7 +92,7 @@ export function AddItem({ closeModal }) {
     toast: true,
     position: "top-end",
     showConfirmButton: false,
-    timer: 1750,
+    timer: 1500,
     timerProgressBar: true,
     didOpen: (toast) => {
       toast.onmouseenter = Swal.stopTimer;
@@ -108,8 +108,6 @@ export function AddItem({ closeModal }) {
       setStatus(""); // Desmarca todos (opcional)
     }
   };
-
-  console.log(naPrateleira);
 
   return (
     <div className="flex flex-col h-full w-full justify-between">

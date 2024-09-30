@@ -23,7 +23,7 @@ export function EditCategory({ closeModal, item }) {
         closeModal();
         setTimeout(() => {
           window.location.reload();
-        }, 1750);
+        }, 1500);
       }
     } catch (error) {
       console.error(error);
@@ -34,7 +34,7 @@ export function EditCategory({ closeModal, item }) {
     toast: true,
     position: "top-end",
     showConfirmButton: false,
-    timer: 1750,
+    timer: 1500,
     timerProgressBar: true,
     didOpen: (toast) => {
       toast.onmouseenter = Swal.stopTimer;

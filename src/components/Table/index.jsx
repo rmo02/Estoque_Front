@@ -18,9 +18,8 @@ export function Table({ searchTerm, options }) {
         icon: "error",
         title: "Categoria excluída com sucesso",
       });
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1500);
+
+      console.log(response.data);
 
       // Atualizar o estado removendo o item excluído
       setDados((prevDados) => prevDados.filter((item) => item.id !== id));
@@ -30,7 +29,6 @@ export function Table({ searchTerm, options }) {
   }
 
   const showConfirmationToDelete = (id) => {
-    console.log(id);
     Swal.fire({
       title: "Excluir Categoria",
       text: "Você tem certeza que deseja excluir esta Categoria? ",
@@ -91,7 +89,6 @@ export function Table({ searchTerm, options }) {
 
   useEffect(() => {
     const getData = async () => {
-      // const response = await app.get(`/category`);
       try {
         const sortedData = options.sort((a, b) => a.name.localeCompare(b.name));
         setDados(sortedData);
@@ -100,7 +97,7 @@ export function Table({ searchTerm, options }) {
       }
     };
     getData();
-  }, []);
+  }, [options]);
 
   const filteredData = dados.filter((items) =>
     items.name.toLowerCase().includes(searchTerm.toLowerCase())

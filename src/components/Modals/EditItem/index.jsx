@@ -64,7 +64,6 @@ export function EditItem({ closeModal, item }) {
 
     try {
       const response = await app.put(`/equipment/${item.id}`, formData) // Edita o item existente
-      console.log(response)
       if (response.status === 200) {
         Toast.fire({
           icon: 'success',
@@ -73,7 +72,7 @@ export function EditItem({ closeModal, item }) {
         closeModal()
         setTimeout(() => {
           window.location.reload()
-        }, 1750)
+        }, 1500)
       }
     } catch (error) {
       console.error(error)
@@ -95,7 +94,7 @@ export function EditItem({ closeModal, item }) {
     toast: true,
     position: 'top-end',
     showConfirmButton: false,
-    timer: 1750,
+    timer: 1500,
     timerProgressBar: true,
     didOpen: toast => {
       toast.onmouseenter = Swal.stopTimer
