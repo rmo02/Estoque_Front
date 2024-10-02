@@ -1,115 +1,113 @@
-import React, { useState } from "react";
-import Modal from "react-modal";
-import Swal from "sweetalert2";
-import { app } from "../../api/api";
-import { EditItem } from "../Modals/Equipments/EditItem";
-import noPhoto from "../../assets/noPhoto.png";
+import React, { useState } from 'react'
+import Modal from 'react-modal'
+import Swal from 'sweetalert2'
+import { app } from '../../api/api'
+import { EditItem } from '../Modals/Equipments/EditItem'
+import noPhoto from '../../assets/noPhoto.png'
+import { MdNoPhotography } from 'react-icons/md'
 
 export function Card({ item }) {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const [modalIsOpen, setModalIsOpen] = useState(false)
 
   function formatStatus(status) {
     switch (status) {
-      case "DISPONIVEL":
-        return "Disponível";
-      case "EM_USO":
-        return "Em Uso";
-      case "EM_MANUTENCAO":
-        return "Em Manutenção";
+      case 'DISPONIVEL':
+        return 'Disponível'
+      case 'EM_USO':
+        return 'Em Uso'
+      case 'EM_MANUTENCAO':
+        return 'Em Manutenção'
       default:
-        return status;
+        return status
     }
   }
 
   function deleteItem(id) {
     try {
-      const response = app.delete(`/equipment/${id}`);
+      const response = app.delete(`/equipment/${id}`)
 
       Toast.fire({
-        icon: "error",
-        title: "Equipamento excluído com sucesso",
-      });
+        icon: 'error',
+        title: 'Equipamento excluído com sucesso'
+      })
       setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+        window.location.reload()
+      }, 1500)
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
   }
 
-  const showConfirmationToDelete = (id) => {
+  const showConfirmationToDelete = id => {
     Swal.fire({
-      title: "Excluir item",
-      text: "Você tem certeza que deseja excluir este item? ",
-      icon: "warning",
+      title: 'Excluir item',
+      text: 'Você tem certeza que deseja excluir este item? ',
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sim",
-      cancelButtonText: "Não",
-    }).then(async (result) => {
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sim',
+      cancelButtonText: 'Não'
+    }).then(async result => {
       if (result.isConfirmed) {
         try {
-          deleteItem(id);
+          deleteItem(id)
         } catch (error) {
-          console.error("Erro ao excluir item:", error);
+          console.error('Erro ao excluir item:', error)
           Toast.fire({
-            icon: "error",
-            title: "Ocorreu um erro ao excluir o item. Tente novamente.",
-          });
+            icon: 'error',
+            title: 'Ocorreu um erro ao excluir o item. Tente novamente.'
+          })
         }
       }
-    });
-  };
+    })
+  }
 
   const Toast = Swal.mixin({
     toast: true,
-    position: "top-end",
+    position: 'top-end',
     showConfirmButton: false,
     timer: 1500,
     timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.onmouseenter = Swal.stopTimer;
-      toast.onmouseleave = Swal.resumeTimer;
-    },
-  });
+    didOpen: toast => {
+      toast.onmouseenter = Swal.stopTimer
+      toast.onmouseleave = Swal.resumeTimer
+    }
+  })
 
   function openModal() {
-    setModalIsOpen(true);
+    setModalIsOpen(true)
   }
 
   function closeModal() {
-    setModalIsOpen(false);
+    setModalIsOpen(false)
   }
 
   const customStyles = {
     content: {
-      top: "50%",
-      left: "50%",
-      right: "auto",
-      bottom: "auto",
-      transform: "translate(-50%, -50%)",
-      width: "40%",
-      height: "75%",
-      borderRadius: "0.5rem",
-    },
-  };
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      transform: 'translate(-50%, -50%)',
+      width: '40%',
+      height: '75%',
+      borderRadius: '0.5rem'
+    }
+  }
 
   return (
-    <div className="bg-color_blue w-full max-w-xs flex flex-col text-white font-normal rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 md:hover:scale-110">
+    <div className="bg-color_blue w-full max-w-xs flex flex-col text-white font-normal rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105">
       <div className="w-full h-28 bg-color_blue rounded-t-lg overflow-hidden">
         {item.image !== null ? (
           <img
             src={item.image}
             className="w-full h-full object-cover"
-            alt="Foto do Equipamento"
+            alt={item.name}
           />
         ) : (
-          <img
-            src={noPhoto}
-            className="p-1 w-full h-full object-contain"
-            alt="Foto do Equipamento"
-          />
+          <MdNoPhotography className="w-full h-full" />
         )}
       </div>
       <div className="p-2 sm:p-4 flex flex-col justify-between flex-grow">
@@ -117,11 +115,11 @@ export function Card({ item }) {
           <div className="flex justify-end">
             <div
               className={`px-2 py-1 text-xs sm:text-sm ${
-                item.status === "EM_USO"
-                  ? "bg-color_yellow"
-                  : item.status === "DISPONIVEL"
-                  ? "bg-color_green"
-                  : "bg-color_red"
+                item.status === 'EM_USO'
+                  ? 'bg-color_yellow'
+                  : item.status === 'DISPONIVEL'
+                  ? 'bg-color_green'
+                  : 'bg-color_red'
               } rounded-2xl select-none`}
             >
               {formatStatus(item.status)}
@@ -164,5 +162,5 @@ export function Card({ item }) {
         <EditItem closeModal={closeModal} item={item} />
       </Modal>
     </div>
-  );
+  )
 }

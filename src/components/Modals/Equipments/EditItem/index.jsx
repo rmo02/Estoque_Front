@@ -20,8 +20,6 @@ export function EditItem({ closeModal, item }) {
   const [status, setStatus] = useState(item.status || '')
   const [file, setFile] = useState(item.image || null)
 
-  console.log(naPrateleira)
-
   useEffect(() => {
     const getShelves = async () => {
       const response = await app.get('/shelves')
@@ -59,6 +57,13 @@ export function EditItem({ closeModal, item }) {
     formData.append('column', coluna)
     formData.append('status', status)
     formData.append('image', file)
+
+    // does not do anything useful
+    // Display the key/value pairs
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1])
+    }
+
     {
       shelf === ''
         ? formData.append('sectionId', section) && setShelf(null)
@@ -66,7 +71,21 @@ export function EditItem({ closeModal, item }) {
     }
 
     try {
-      const response = await app.put(`/equipment/${item.id}`, formData) // Edita o item existente
+      const response = await app.put(`/equipment/${item.id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+
+      // const response = await app.put(`/equipment/${item.id}`, {
+      //   name: name,
+      //   categoryId: category,
+      //   inShelf: naPrateleira,
+      //   linha: linha,
+      //   column: coluna,
+      //   status: status,
+      //   image: file,
+      //   sectionId: section,
+      //   shelfId: shelf
+      // }) // Edita o item existente
       if (response.status === 200) {
         Toast.fire({
           icon: 'success',
@@ -81,7 +100,7 @@ export function EditItem({ closeModal, item }) {
       console.error(error)
     }
   }
-
+  console.log(item)
   const handleStorageTypeChange = e => {
     const value = e.target.value === 'true' // converte o valor para boolean
     setNaPrateleira(value)
@@ -138,7 +157,8 @@ export function EditItem({ closeModal, item }) {
               className="border border-0.5 border-color_grey rounded-md p-1 focus:outline-color_blue w-full text-sm"
               id="Name"
               placeholder="Digite o nome do item"
-              defaultValue={item.name}
+              // defaultValue={item.name}
+              value={name}
               onChange={e => setName(e.target.value)}
             />
           </div>
