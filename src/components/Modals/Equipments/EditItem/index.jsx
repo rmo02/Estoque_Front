@@ -58,12 +58,6 @@ export function EditItem({ closeModal, item }) {
     formData.append('status', status)
     formData.append('image', file)
 
-    // does not do anything useful
-    // Display the key/value pairs
-    for (var pair of formData.entries()) {
-      console.log(pair[0] + ', ' + pair[1])
-    }
-
     {
       shelf === ''
         ? formData.append('sectionId', section) && setShelf(null)
@@ -75,17 +69,6 @@ export function EditItem({ closeModal, item }) {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
 
-      // const response = await app.put(`/equipment/${item.id}`, {
-      //   name: name,
-      //   categoryId: category,
-      //   inShelf: naPrateleira,
-      //   linha: linha,
-      //   column: coluna,
-      //   status: status,
-      //   image: file,
-      //   sectionId: section,
-      //   shelfId: shelf
-      // }) // Edita o item existente
       if (response.status === 200) {
         Toast.fire({
           icon: 'success',
@@ -101,6 +84,7 @@ export function EditItem({ closeModal, item }) {
     }
   }
   console.log(item)
+
   const handleStorageTypeChange = e => {
     const value = e.target.value === 'true' // converte o valor para boolean
     setNaPrateleira(value)
@@ -110,6 +94,56 @@ export function EditItem({ closeModal, item }) {
     } else {
       setShelf('') // Limpa a prateleira quando for seção
     }
+  }
+  console.log(file)
+  function deletePhoto(id) {
+    setFile(null)
+    console.log(file)
+    const formData = new FormData()
+    formData.append('image', file)
+
+    {
+      shelf === ''
+        ? formData.append('sectionId', section) && setShelf(null)
+        : formData.append('shelfId', shelf) && setSection(null)
+    }
+    try {
+      const response = app.put(`/equipment/${item.id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      Toast.fire({
+        icon: 'error',
+        title: `Imagem excluída com sucesso`
+      })
+      console.log(response)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const showConfirmationToDelete = id => {
+    Swal.fire({
+      title: `Excluir Imagem?`,
+      text: `Você tem certeza que deseja excluir esta imagem?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sim',
+      cancelButtonText: 'Não'
+    }).then(async result => {
+      if (result.isConfirmed) {
+        try {
+          await deletePhoto(id) // Chamar função para deletar
+        } catch (error) {
+          console.error(`Erro ao excluir imagem`, error)
+          Toast.fire({
+            icon: 'error',
+            title: `Ocorreu um erro ao excluir a foto de ${item.name}. Tente novamente.`
+          })
+        }
+      }
+    })
   }
 
   const Toast = Swal.mixin({
@@ -360,7 +394,7 @@ export function EditItem({ closeModal, item }) {
                 alt="file"
               />
               <IoMdTrash
-                onClick={handleDeleteFile}
+                onClick={showConfirmationToDelete}
                 className="text-red-600 absolute top-0 right-0 cursor-pointer"
               />
             </div>
