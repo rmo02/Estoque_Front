@@ -20,8 +20,9 @@ export function Header(closeModal) {
       left: "auto",
       right: "2%",
       transform: "auto",
-      width: "14%",
-      height: "38%",
+      width: "80%", // Aumente a largura para telas menores
+      maxWidth: "300px", // Limite a largura máxima
+      height: "34%", // Ajuste a altura automaticamente
       borderRadius: "0.5rem",
     },
   };

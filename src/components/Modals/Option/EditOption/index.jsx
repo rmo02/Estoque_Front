@@ -11,24 +11,24 @@ export function EditOption({ closeModal, item }) {
   const finishForm = name.length !== 0;
 
   let typeUrl = isCategorias
-    ? 'category'
+    ? "category"
     : isPrateleiras
-    ? 'shelves'
+    ? "shelves"
     : isSecoes
-    ? 'section'
-    : ''
+    ? "section"
+    : "";
 
   let typeText = isCategorias
-    ? 'categoria'
+    ? "categoria"
     : isPrateleiras
-    ? 'prateleira'
+    ? "prateleira"
     : isSecoes
-    ? 'seção'
-    : ''
+    ? "seção"
+    : "";
 
   const capitalizedTypeText =
-    typeText.charAt(0).toUpperCase() + typeText.slice(1)
-    
+    typeText.charAt(0).toUpperCase() + typeText.slice(1);
+
   const handleEditCategory = async (event) => {
     event.preventDefault();
 

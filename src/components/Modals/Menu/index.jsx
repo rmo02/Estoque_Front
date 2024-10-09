@@ -2,16 +2,16 @@ import {
   MdClose,
   MdCropSquare,
   MdOutlineCategory,
-  MdSpaceBar
-} from 'react-icons/md'
-import { useNavigate } from 'react-router-dom'
+  MdSpaceBar,
+} from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 export function Menu({ closeModal }) {
-  const navigate = useNavigate()
-  
+  const navigate = useNavigate();
+
   function navigateTo(route) {
-    navigate(`/${route}`)
-    closeModal()
+    navigate(`/${route}`);
+    closeModal();
   }
 
   return (
@@ -26,28 +26,26 @@ export function Menu({ closeModal }) {
         <p>Menu</p>
       </div>
       <div
-        className="flex flex-row items-center py-2 space-x-2 border-b-2 border-gray-300 hover:cursor-pointer
-      "
-        onClick={() => navigateTo('categorias')}
+        className="flex flex-row items-center py-2 space-x-2 border-b-2 border-gray-300 hover:cursor-pointer"
+        onClick={() => navigateTo("categorias")}
       >
         <MdOutlineCategory />
         <p>Categorias</p>
       </div>
       <div
-        className="flex flex-row items-center py-2 space-x-2 border-b-2 border-gray-300 hover:cursor-pointer
-      "
-        onClick={() => navigateTo('prateleiras')}
+        className="flex flex-row items-center py-2 space-x-2 border-b-2 border-gray-300 hover:cursor-pointer"
+        onClick={() => navigateTo("prateleiras")}
       >
         <MdSpaceBar />
         <p>Prateleiras</p>
       </div>
       <div
         className="flex flex-row items-center py-2 space-x-2 hover:cursor-pointer"
-        onClick={() => navigateTo('secoes')}
+        onClick={() => navigateTo("secoes")}
       >
         <MdCropSquare />
         <p>Seções</p>
       </div>
     </div>
-  )
+  );
 }
